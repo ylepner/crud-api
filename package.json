@@ -2,7 +2,11 @@
   "name": "crud-api",
   "version": "1.0.0",
   "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/crud-api/assignment",
+  "scripts": {
+    "start:dev": "nodemon ./src/index.ts"
+  },
   "devDependencies": {
+    "@types/node": "^20.3.3",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.44.0",
@@ -10,5 +14,8 @@
   },
   "author": "ylepner",
   "license": "ISC",
-  "homepage": "https://github.com/ylepner/crud-api#readme"
+  "homepage": "https://github.com/ylepner/crud-api#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
 }
