@@ -1,0 +1,11 @@
+{
+  "name": "crud-api",
+  "version": "1.0.0",
+  "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/crud-api/assignment",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "author": "ylepner",
+  "license": "ISC",
+  "homepage": "https://github.com/ylepner/crud-api#readme"
+}
