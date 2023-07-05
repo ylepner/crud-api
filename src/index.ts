@@ -10,14 +10,21 @@ const uuid = '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed';
 
 const service = new UserService();
 const myServer = createServer(async (req, res) => {
-  const route = routes.find(x => x.method === req.method && req.url?.match(x.url));
+  let url = req.url;
+  if (url == null) {
+    throw new Error('Internal error');
+  }
+  if (url.at(-1) === '/') {
+    url = url.slice(0, -1);
+  }
+  const route = routes.find(x => x.method === req.method && url?.match(x.url));
   if (!route) {
     res.writeHead(404);
     res.write('Such route does not exist');
     res.end();
     return;
   }
-  const param = req.url!.match(route.url)?.[0];
+  const param = req.url!.match(route.url)?.[1];
   try {
     const result = await route.execFn(param, req);
     writeData(result.data, result.code, res);
