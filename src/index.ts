@@ -3,10 +3,10 @@ import { IncomingMessage, ServerResponse, createServer } from 'http';
 import { UserService } from './user.service';
 import { readJsonBody } from './read-body';
 import { NewUserRequest } from './models/models';
-import { type } from 'os';
+import { validate } from 'uuid';
+
 
 const PORT = process.env.PORT || 4000;
-const uuid = '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed';
 
 const service = new UserService();
 const myServer = createServer(async (req, res) => {
@@ -52,7 +52,12 @@ const routes: RouteEntry[] = [
   },
   {
     method: 'GET', url: /^\/api\/users\/(.+)$/, execFn: async (userId) => {
-      // uuid
+      if (!validate(userId)) {
+        return {
+          data: 'User id is invalid',
+          code: 400
+        }
+      }
       const result = service.getUser(userId);
       if (!result) {
         return {
@@ -75,9 +80,9 @@ const routes: RouteEntry[] = [
           data: 'Request body does not contain required fields'
         }
       }
-      service.addUser(user)
       return {
         code: 201,
+        data: service.addUser(user)
       };
     }
   }
