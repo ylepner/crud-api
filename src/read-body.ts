@@ -13,7 +13,7 @@ export function readJsonBody(incoming: IncomingMessage) {
         const jsonData = JSON.parse(data);
         resolve(jsonData);
       } catch (error) {
-        reject(error);
+        resolve(null);
       }
     });
 

@@ -2,22 +2,22 @@ import { NewUserRequest, User } from "./models/models";
 import { v4 as uuidv4 } from 'uuid';
 
 export class UserService {
-  private users: User[] = [];
+  private users = new Map<string, User>();
 
-  getUsers() {
-    return this.users;
+  getUsers(): User[] {
+    return Array.from(this.users.values());
   }
 
-  getUser(userId: string) {
-    return this.users.find(x => x.id === userId);
+  getUser(userId: string): User | undefined {
+    return this.users.get(userId);
   }
 
-  addUser(user: NewUserRequest) {
+  addUser(user: NewUserRequest): User {
     const result = {
       id: this.generateUuid(),
       ...user,
     }
-    this.users.push(result);
+    this.users.set(result.id, result);
     return result
   }
 
@@ -25,8 +25,17 @@ export class UserService {
 
   }
 
-  updateUser(user: User) {
-
+  updateUser(userId: string, user: NewUserRequest) {
+    const userInBase = this.users.get(userId);
+    if (userInBase) {
+      const result = {
+        id: userId,
+        ...user,
+      }
+      this.users.set(userId, result)
+      return result
+    }
+    return null
   }
 
   generateUuid() {

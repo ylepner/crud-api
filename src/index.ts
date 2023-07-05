@@ -28,7 +28,6 @@ const myServer = createServer(async (req, res) => {
   try {
     const result = await route.execFn(param, req);
     writeData(result.data, result.code, res);
-
   } catch (e) {
     writeData(null, 404, res);
   }
@@ -85,6 +84,34 @@ const routes: RouteEntry[] = [
         data: service.addUser(user)
       };
     }
+  },
+  {
+    method: 'PUT', url: /^\/api\/users\/(.+)$/, execFn: async (userId, body) => {
+      const user = await readJsonBody(body);
+      if (!validateUser(user)) {
+        return {
+          code: 400,
+          data: 'Request body does not contain required fields'
+        }
+      }
+      if (!validate(userId)) {
+        return {
+          data: 'User id is invalid',
+          code: 400,
+        }
+      }
+      const result = service.updateUser(userId, user)
+      if (!result) {
+        return {
+          code: 404,
+          data: 'user not found'
+        }
+      }
+      return {
+        code: 200,
+        data: result
+      }
+    }
   }
 ]
 
@@ -125,7 +152,7 @@ function validateUser(obj: unknown): obj is NewUserRequest {
   if (typeof obj.age !== 'number') {
     return false
   }
-  if (obj.age < 0) {
+  if (obj.age < 0 || obj.age > 120) {
     return false
   }
   if (!('hobbies' in obj)) {
