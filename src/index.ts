@@ -34,7 +34,7 @@ const myServer = createServer(async (req, res) => {
 })
 
 interface RouteEntry {
-  method: 'GET' | 'POST' | 'PUT';
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   url: RegExp;
   execFn: (param: any, request: IncomingMessage) => Promise<HttpResponse>
 }
@@ -112,6 +112,26 @@ const routes: RouteEntry[] = [
         data: result
       }
     }
+  },
+  {
+    method: 'DELETE', url: /^\/api\/users\/(.+)$/, execFn: async (userId) => {
+      if (!validate(userId)) {
+        return {
+          data: 'User id is invalid',
+          code: 400,
+        }
+      }
+      if (!service.removeUser(userId)) {
+        return {
+          code: 404,
+          data: 'User not found'
+        }
+      }
+      return {
+        code: 204,
+        data: 'User has been deleted'
+      }
+    }
   }
 ]
 
@@ -120,9 +140,7 @@ myServer.listen(PORT, () => {
 });
 
 function writeData(data: any | undefined, code: number, res: ServerResponse) {
-
   res.writeHead(code);
-
   if (data)
     res.write(JSON.stringify(data));
   res.end();

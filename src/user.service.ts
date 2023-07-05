@@ -22,7 +22,12 @@ export class UserService {
   }
 
   removeUser(userId: string) {
-
+    const userInBase = this.users.get(userId);
+    if (userInBase) {
+      this.users.delete(userId)
+      return true
+    }
+    return false
   }
 
   updateUser(userId: string, user: NewUserRequest) {
@@ -40,7 +45,6 @@ export class UserService {
 
   generateUuid() {
     const uuid = uuidv4();
-    console.log(uuid);
     return uuid;
   }
 }
