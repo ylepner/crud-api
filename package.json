@@ -16,6 +16,7 @@
   "license": "ISC",
   "homepage": "https://github.com/ylepner/crud-api#readme",
   "dependencies": {
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "uuid": "^9.0.0"
   }
 }

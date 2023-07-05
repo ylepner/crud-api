@@ -1,6 +1,9 @@
 import 'dotenv/config';
 import { IncomingMessage, ServerResponse, createServer } from 'http';
 import { UserService } from './user.service';
+import { readJsonBody } from './read-body';
+import { NewUserRequest } from './models/models';
+import { type } from 'os';
 
 const PORT = process.env.PORT || 4000;
 const uuid = '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed';
@@ -42,6 +45,7 @@ const routes: RouteEntry[] = [
   },
   {
     method: 'GET', url: /^\/api\/users\/(.+)$/, execFn: async (userId) => {
+      // uuid
       const result = service.getUser(userId);
       if (!result) {
         return {
@@ -55,7 +59,21 @@ const routes: RouteEntry[] = [
       }
     }
   },
-  // { method: 'POST', url: /^\/api\/users$/, execFn: (_, body) => service.addUser(body) }
+  {
+    method: 'POST', url: /^\/api\/users$/, execFn: async (_, body) => {
+      const user = await readJsonBody(body);
+      if (!validateUser(user)) {
+        return {
+          code: 400,
+          data: 'Request body does not contain required fields'
+        }
+      }
+      service.addUser(user)
+      return {
+        code: 201,
+      };
+    }
+  }
 ]
 
 myServer.listen(PORT, () => {
@@ -73,5 +91,39 @@ function writeData(data: any | undefined, code: number, res: ServerResponse) {
 
 interface HttpResponse {
   code: number;
-  data: any;
+  data?: any;
+}
+
+function validateUser(obj: unknown): obj is NewUserRequest {
+  if (typeof obj !== 'object') {
+    return false;
+  }
+  if (!obj) {
+    return false;
+  }
+  if (!('username' in obj)) {
+    return false;
+  }
+  if (typeof obj.username !== 'string') {
+    return false;
+  }
+  if (!('age' in obj)) {
+    return false
+  }
+  if (typeof obj.age !== 'number') {
+    return false
+  }
+  if (obj.age < 0) {
+    return false
+  }
+  if (!('hobbies' in obj)) {
+    return false
+  }
+  if (!Array.isArray(obj.hobbies)) {
+    return false
+  }
+  if (obj.hobbies.some((el) => typeof el !== 'string')) {
+    return false
+  }
+  return true;
 }

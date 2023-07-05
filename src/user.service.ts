@@ -1,4 +1,4 @@
-import { User } from "./models/models";
+import { NewUserRequest, User } from "./models/models";
 
 export class UserService {
   private users: User[] = [];
@@ -11,8 +11,11 @@ export class UserService {
     return this.users.find(x => x.id === userId);
   }
 
-  addUser(user: User) {
-    this.users.push(user);
+  addUser(user: NewUserRequest) {
+    this.users.push({
+      id: 'asdfasdf',
+      ...user,
+    });
   }
 
   removeUser(userId: string) {
