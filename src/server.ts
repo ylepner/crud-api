@@ -141,9 +141,13 @@ interface RouteEntry {
 
 
 function writeData(data: any | undefined, code: number, res: ServerResponse) {
+  if (data) {
+    res.setHeader('Content-Type', 'application/json');
+  }
   res.writeHead(code);
-  if (data)
+  if (data) {
     res.write(JSON.stringify(data));
+  }
   res.end();
 }
 
