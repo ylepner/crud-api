@@ -4,6 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 export class UserService {
   private users = new Map<string, User>();
 
+  constructor(users: User[] = []) {
+    this.users = new Map(users.map(x => [x.id, x]));
+  }
+
   getUsers(): User[] {
     return Array.from(this.users.values());
   }
