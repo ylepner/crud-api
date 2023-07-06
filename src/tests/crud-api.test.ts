@@ -62,8 +62,6 @@ describe('Tests with api methods', () => {
 });
 
 describe('Test bad request', () => {
-  let server: Server;
-  let userId: String;
   const testUser = {
     username: "Test Name",
     age: 56,
@@ -79,7 +77,7 @@ describe('Test bad request', () => {
   });
 
   it('Should answer with status code 404 if request sends to non-existing endpoints', async () => {
-    (await apiRequest.get('/user').expect(404))
+    await apiRequest.get('/user').expect(404).expect('Such route does not exist');
   });
 
   it('Should answer with status code 400 if POST request body does not contain required fields', async () => {
@@ -100,4 +98,42 @@ describe('Test bad request', () => {
     const fakeUuid = '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d';
     await apiRequest.put(`/users/${fakeUuid}`).send(testUser).expect(404);
   })
+})
+
+describe('Test validation', () => {
+  beforeAll(() => {
+    server = createMyServer(new UserService()).listen(PORT, () => {
+      console.log(`Server is listening on port ${PORT}`);
+    });
+  });
+  afterAll(() => {
+    server.close();
+  });
+
+  it(`Should answer with status code 400 if POST request body field "username" is not a string`, async () => {
+    const testUser = {
+      username: 111,
+      age: 56,
+      hobbies: ["reading", "swimming"]
+    }
+    apiRequest.post('/users').send(testUser).expect(400);
+  });
+
+  it(`Should answer with status code 400 if POST request body field "age" is not a number`, async () => {
+    const testUser = {
+      username: "Test Name",
+      age: '56',
+      hobbies: ["reading", "swimming"]
+    }
+    apiRequest.post('/users').send(testUser).expect(400);
+  });
+
+  it(`Should answer with status code 400 if POST request body field "hobbies" is not an array`, async () => {
+    const testUser = {
+      username: "Test Name",
+      age: '56',
+      hobbies: "reading",
+    }
+    apiRequest.post('/users').send(testUser).expect(400);
+  });
 })
