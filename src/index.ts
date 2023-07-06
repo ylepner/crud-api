@@ -10,26 +10,30 @@ const PORT = process.env.PORT || 4000;
 
 const service = new UserService();
 const myServer = createServer(async (req, res) => {
-  let url = req.url;
-  if (url == null) {
-    throw new Error('Internal error');
-  }
-  if (url.at(-1) === '/') {
-    url = url.slice(0, -1);
-  }
-  const route = routes.find(x => x.method === req.method && url?.match(x.url));
-  if (!route) {
-    res.writeHead(404);
-    res.write('Such route does not exist');
-    res.end();
-    return;
-  }
-  const param = req.url!.match(route.url)?.[1];
   try {
-    const result = await route.execFn(param, req);
-    writeData(result.data, result.code, res);
-  } catch (e) {
-    writeData(null, 404, res);
+    let url = req.url;
+    if (url == null) {
+      throw new Error('Internal error');
+    }
+    if (url.at(-1) === '/') {
+      url = url.slice(0, -1);
+    }
+    const route = routes.find(x => x.method === req.method && url?.match(x.url));
+    if (!route) {
+      res.writeHead(404);
+      res.write('Such route does not exist');
+      res.end();
+      return;
+    }
+    const param = req.url!.match(route.url)?.[1];
+    try {
+      const result = await route.execFn(param, req);
+      writeData(result.data, result.code, res);
+    } catch (e) {
+      writeData(null, 404, res);
+    }
+  } catch {
+    writeData('Internal server error', 500, res);
   }
 })
 
