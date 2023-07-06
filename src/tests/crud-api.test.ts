@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import '../index'
+import '../server'
 
 const api = request(`http://localhost:${42}/api`);
 console.log('Im doing something here')
