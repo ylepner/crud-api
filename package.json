@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "This repository is the part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/crud-api/assignment",
   "scripts": {
-    "start:dev": "nodemon ./src/index.ts"
+    "start:dev": "nodemon ./src/index.ts",
+    "start:prod": "tsc --build && node ./dist/index.js"
   },
   "devDependencies": {
     "@types/node": "^20.3.3",

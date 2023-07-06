@@ -64,7 +64,7 @@ const routes: RouteEntry[] = [
       const result = service.getUser(userId);
       if (!result) {
         return {
-          data: 'not found',
+          data: 'User not found',
           code: 404
         }
       }
